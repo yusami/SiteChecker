@@ -1,7 +1,5 @@
 #!/usr/bin/env ruby
 
-# require 'bundler'
-# Bundler.require
 require "net/http"
 require 'json'
 
@@ -22,10 +20,13 @@ class SiteChecker
         # puts [uri.to_s, response.value].join(" : ")
       end
     rescue => e
+      # failure
       puts "-%s: %s" % [url, e.to_s]
-      return
+      return -1
     end
+    # success
     puts "-%s: %d" % [url, response.code] # status code
+    return 0
   end
 
   def read_config
@@ -49,6 +50,7 @@ class SiteChecker
 
   def show_result
     puts "-Total: %d, Success: %d, Failure: %d" % [@total, @success, @total-@success]
+    (@total == @success) ? 0 : 1
   end
 
   def do_all_queries
@@ -60,7 +62,19 @@ class SiteChecker
 
     puts "Checking site..."
     @sites[:Sites].each do |site|
-      do_query site
+      max_retry = 5
+      max_retry.times do |i|
+        # Query
+        ret = do_query site
+        break if ret == 0
+        # Retry if an error occurs
+        if (i+1) < max_retry then
+          puts "Retrying... (%d)" % (i+1)
+          sleep 3
+        else
+          puts "Give up"
+        end
+      end
     end
 
     # Result
@@ -69,5 +83,5 @@ class SiteChecker
 end
 
 sc = SiteChecker.new
-sc.do_all_queries
+exit sc.do_all_queries
 
