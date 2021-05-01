@@ -12,7 +12,7 @@
 
 ## Requirement
 
-* Ruby
+* Ruby 2.7
 
 ## Usage
 
@@ -34,7 +34,7 @@ Checking site...
 
 ## Licence
 
-* Copyright &copy; 2020 yusami
+* Copyright &copy; 2020-2021 yusami
 * Licensed under the [Apache License, Version 2.0][Apache]
 
 [Apache]: http://www.apache.org/licenses/LICENSE-2.0
