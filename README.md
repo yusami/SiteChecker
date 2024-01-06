@@ -7,12 +7,12 @@
 ## Description
 
 1. Read configs from the file. (`config.json`)
-2. Connect each site.
-3. Show the summary.
+2. Connect each site by HTTP.
+3. Show the result.
 
 ## Requirement
 
-* Ruby 2.7
+* Ruby 3.1
 
 ## Usage
 
@@ -34,7 +34,7 @@ Checking site...
 
 ## Licence
 
-* Copyright &copy; 2020-2022 yusami
+* Copyright &copy; 2020-2024 yusami
 * Licensed under the [Apache License, Version 2.0][Apache]
 
 [Apache]: http://www.apache.org/licenses/LICENSE-2.0
