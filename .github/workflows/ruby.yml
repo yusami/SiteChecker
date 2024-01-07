@@ -15,4 +15,4 @@ jobs:
         bundler-cache: true
     - name: Build and run
       run: |
-        bundle exec ruby runner.rb
+        ruby runner.rb
