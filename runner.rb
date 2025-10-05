@@ -5,28 +5,41 @@ require 'json'
 
 class SiteChecker
   def do_query(url)
+    ret = -1
+
     uri = URI.parse(url)
+    http = Net::HTTP.new(uri.host, uri.port)
+    # HTTP options
+    http.use_ssl = (uri.scheme == 'https')
+    http.open_timeout = 5
+    http.read_timeout = 5
+    # TLS options
+    http.cert_store = OpenSSL::X509::Store.new
+    http.cert_store.set_default_paths
+
     begin
-      response = Net::HTTP.start(uri.host, uri.port, use_ssl: uri.scheme == 'https') do |http|
-        http.open_timeout = 5
-        http.read_timeout = 5
-        http.get(uri.request_uri)
-      end
- 
+      req = Net::HTTP::Head.new('/')
+      response = http.start { http.request(req) }
+      puts "%s: %d" % [url, response.code] # status code
+
+      # success
       case response
       when Net::HTTPSuccess
         @success += 1
       else
         # puts [uri.to_s, response.value].join(" : ")
       end
+      ret = 0
+    rescue Errno::ECONNREFUSED
+      puts "Error: connection refused"
+    rescue OpenSSL::SSL::SSLError => e
+      puts "#{e.class}: #{e.message}"
     rescue => e
       # failure
       puts "-%s: %s" % [url, e.to_s]
-      return -1
     end
-    # success
-    puts "-%s: %d" % [url, response.code] # status code
-    return 0
+
+    return ret
   end
 
   def read_config
@@ -84,4 +97,3 @@ end
 
 sc = SiteChecker.new
 exit sc.do_all_queries
-
